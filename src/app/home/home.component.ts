@@ -9,5 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./home.component.css']
 })
 export default class HomeComponent {
-
+  // @ts-ignore
+  APP_VERSION = APP_VERSION;
 }
