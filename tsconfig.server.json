@@ -8,7 +8,7 @@
     ]
   },
   "files": [
-    "src/main.server.ts",
-    "server.ts"
+    "src/bootstrap.server.ts",
+    "server/main.ts"
   ]
 }

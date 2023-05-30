@@ -119,7 +119,7 @@
             },
             "optimization": false,
             "outputPath": "dist/angular-server-services/server",
-            "main": "server.ts",
+            "main": "server/main.ts",
             "tsConfig": "tsconfig.server.json"
           },
           "configurations": {
