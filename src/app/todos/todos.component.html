@@ -1,0 +1,14 @@
+<h2>Todos</h2>
+
+<ul>
+  <li *ngFor="let todo of todos()">
+    <span [class.completed]="todo.completed">
+      {{todo.title}}
+    </span>
+    <!-- <button (click)="toggleTodoComplete(todo)">
+      {{todo.completed ? 'Incomplete' : 'Complete'}}
+    </button>
+    <button (click)="removeTodo(todo)">
+      Remove
+    </button> -->
+</ul>

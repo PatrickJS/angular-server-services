@@ -1,17 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'my-app',
+  selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <h1>Hello from {{name}}!</h1>
-    <a target="_blank" href="https://angular.io/start">
-      Learn more about Angular 
-    </a>
-  `,
+  imports: [CommonModule, RouterOutlet, RouterLink],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class App {
-  name = 'Angular';
+export class AppComponent {
+  title = 'angular-universal-standalone';
 }

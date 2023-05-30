@@ -1,9 +1,11 @@
-import 'zone.js/dist/zone';
 import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
 
-import { App } from './app/app.component';
 
-// ez document ready
+
+// dom ready
 requestAnimationFrame(() => {
-  bootstrapApplication(App);
-});
+  bootstrapApplication(AppComponent, appConfig)
+    .catch((err) => console.error(err));
+});  
