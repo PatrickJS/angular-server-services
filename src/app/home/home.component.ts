@@ -11,9 +11,8 @@ import { ExampleService } from './ServerService';
 })
 export default class HomeComponent {
   exampleService = inject(ExampleService);
-  example = this.exampleService.getTodo({
-    id: 1
-  });
+  example = this.exampleService.getTodo({id: 1});
   // @ts-ignore
   APP_VERSION = APP_VERSION;
+
 }

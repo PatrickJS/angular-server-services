@@ -10,13 +10,18 @@ import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 import { provideServerRendering } from '@angular/platform-server';
 import { appConfig } from './app.config';
 
+import { TransferState } from './home/ServerService/TransferState' ;
 import { ExampleService } from './home/ServerService/example.service.browser';
 import { ExampleService as ExampleServiceServer } from './home/ServerService/example.service.server';
 
 import { ReflectiveInjector } from 'injection-js';
 
+export const transferState = new TransferState();
+
 // TODO: better angular di control
+// TODO: auto generate this
 export const injector = ReflectiveInjector.resolveAndCreate([
+  { provide: TransferState, useValue: transferState},
   { provide: ExampleServiceServer, useClass: ExampleServiceServer },
   { provide: ExampleService, useExisting: ExampleServiceServer },
   { provide: 'ExampleService', useExisting: ExampleServiceServer }
@@ -25,6 +30,7 @@ export const injector = ReflectiveInjector.resolveAndCreate([
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(),
+    // TODO: auto generate this
     { provide: ExampleService, useFactory: () => injector.get(ExampleService) }
   ]
 };

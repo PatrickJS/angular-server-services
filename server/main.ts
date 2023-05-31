@@ -1,5 +1,7 @@
-import 'zone.js/node';
+import 'reflect-metadata'; // injection-js
 import 'cross-fetch/polyfill';
+import 'zone.js/node';
+import 'zone.js/dist/zone-patch-fetch';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
@@ -7,7 +9,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import bootstrap, {injector} from '../src/bootstrap.server';
+import bootstrap, {injector, transferState} from '../src/bootstrap.server';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -30,12 +32,13 @@ export function app(): express.Express {
   server.get('/api/**', (req, res) => {
   });
 
+  // TODO: auto generate this
   server.post('/angular-server-services/:Service/:Method', (req, res) => {
     const service = injector.get(req.params.Service);
-    console.log('server service request: service', req.params.Service)
+    console.log('angular-server-service request: service', req.params.Service)
     const method = service[req.params.Method];
-    console.log('server service request: method', req.params.Method)
-    console.log('server service request: body', req.body)
+    console.log('angular-server-service request: method', req.params.Method)
+    console.log('angular-server-service request: body', req.body)
     method.apply(service, req.body).then((result: any) => {
       res.json(result);
     });
@@ -48,11 +51,22 @@ export function app(): express.Express {
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
+    // TODO: better transfer state
+    const state = {};
+    transferState._state = state;
     res.render(indexHtml, {
       req,
       providers: [
-        { provide: APP_BASE_HREF, useValue: req.baseUrl }
-      ]
+        { provide: APP_BASE_HREF, useValue: req.baseUrl },
+      ],
+    }, (err, html) =>{
+      if (err) {
+        console.error(err);
+        res.send(err);
+      }
+      console.log('SSR done');
+      // TODO: auto generate this
+      res.send(html.replace(/<!-- NG-UNIVERSAL -->/, `<script id="ng-universal-state" type="angular/json">${JSON.stringify(state, null, 2)}</script>`));
     });
   });
 

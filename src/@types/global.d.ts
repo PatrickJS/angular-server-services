@@ -1,3 +1,5 @@
+import 'zone.js/zone.d.ts';
+
 // ignore this typescript thing
 export {};
 
