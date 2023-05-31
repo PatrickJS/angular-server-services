@@ -45,6 +45,7 @@ export class AngularServerServicePlugin {
     }
     compiler.hooks.beforeCompile.tapAsync('WebpackPlugin', (params, callback) => {
       if (this.once) {
+        callback();
         return;
       }
       const serverComponents = this.options.serverComponents;
