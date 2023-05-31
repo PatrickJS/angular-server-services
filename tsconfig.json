@@ -25,7 +25,7 @@
       "dom"
     ],
     "paths": {
-      "@server/*": ["src/server/*"]
+      "@server/*": ["src/@server/*"]
     }
   },
   "angularCompilerOptions": {
