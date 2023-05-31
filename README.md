@@ -4,6 +4,7 @@ This project presents an example of Angular Server Services implementation, util
 
 Whats used in the repo:
 * Angular 16
+* Standalone Components
 * Universal
 * Hydration
 * NgExpressEngine
