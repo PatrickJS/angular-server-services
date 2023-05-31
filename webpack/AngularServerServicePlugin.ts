@@ -43,7 +43,7 @@ export class AngularServerServicePlugin {
     if (this.once) {
       return;
     }
-    compiler.hooks.beforeCompile.tapAsync('WebpackPlugin', (params, callback) => {
+    compiler.hooks.beforeCompile.tapAsync('AngularServerServicePlugin', (params, callback) => {
       if (this.once) {
         callback();
         return;
