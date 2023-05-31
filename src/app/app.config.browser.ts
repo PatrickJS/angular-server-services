@@ -2,7 +2,7 @@ import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 
 import { appConfig } from './app.config';
 
-import { ExampleService } from '@server/Example.service';
+import { ExampleService } from '@server/ExampleService';
 
 export const browserConfig: ApplicationConfig = {
   providers: [

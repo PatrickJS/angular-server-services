@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ExampleService } from '@server/Example.service';
+import { ExampleService } from '@server/ExampleService';
 
 @Component({
   selector: 'app-home',
