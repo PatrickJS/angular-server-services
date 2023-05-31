@@ -13,6 +13,7 @@ Angular can easily support this pattern in Angular Universal with little effort.
 
 <img width="1276" alt="Screenshot 2023-05-30 at 7 32 35 PM" src="https://github.com/PatrickJS/angular-server-services/assets/1016365/20a4105a-fe4b-45ce-926a-a679e331c0d7">
 
+Initial load uses transfer state. When you navigate to another page the back to Home we will make an RPC to get the updated state
 
 # TODO
 - [ ] use webpack to auto-generate ServerServices
