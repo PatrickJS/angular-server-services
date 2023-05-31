@@ -8,7 +8,10 @@ Whats used in the repo:
 * NgExpressEngine
 * Custom Webpack
 
-Please note, we are currently using injection-js to bypass the Angular injector and micotask to force zone.js to wait on the server-side. This workarounds are only needed  to workaround how Angular bootstraps and manages the apps on the server. I am also creating my own TransferState service just for this demo.
+> Please note, we are currently using injection-js to bypass the Angular injector and micotask to force zone.js to wait on the server-side. This workarounds are only needed  to workaround how Angular bootstraps and manages the apps on the server. I am also creating my own TransferState service just for this demo.
+
+## Why
+The goal is to replicate GraphQL or RSC by moving all domain logic that lives in these services to the server. We want to do this so we can utilize caching on the server and remove all client code for these services (usually half your codebase)
 
 Angular can easily support this pattern in Angular Universal with little effort.
 
@@ -19,3 +22,6 @@ Initial load uses transfer state. When you navigate to another page the back to 
 
 # TODO
 - [ ] use webpack to auto-generate ServerServices
+- [ ] batch requests
+- [ ] hook into router to batch requests
+- [ ] server commponents?
