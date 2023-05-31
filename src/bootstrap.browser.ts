@@ -8,8 +8,8 @@
 
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
+import { config } from './app/app.config.browser';
 
-const bootstrap = () => bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
+const bootstrap = () => bootstrapApplication(AppComponent, config).catch((err) => console.error(err));
 
 export default bootstrap;

@@ -1,38 +1,49 @@
 import 'zone.js/node';
+import 'cross-fetch/polyfill';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import * as express from 'express';
+import * as bodyParser from 'body-parser';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import bootstrap from '../src/bootstrap.server';
+import bootstrap, {injector} from '../src/bootstrap.server';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
   const distFolder = join(process.cwd(), 'dist/angular-server-services/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
-
+  
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
   server.engine('html', ngExpressEngine({
     bootstrap
   }));
-
+  
   server.set('view engine', 'html');
   server.set('views', distFolder);
-
+  
+  server.use(bodyParser.json());
 
   
   // Example Express Rest API endpoints
   server.get('/api/**', (req, res) => {
   });
 
-  server.get('/angular-server-services/**', (req, res) => {
+  server.post('/angular-server-services/:Service/:Method', (req, res) => {
+    const service = injector.get(req.params.Service);
+    console.log('server service request: service', req.params.Service)
+    const method = service[req.params.Method];
+    console.log('server service request: method', req.params.Method)
+    console.log('server service request: body', req.body)
+    method.apply(service, req.body).then((result: any) => {
+      res.json(result);
+    });
   });
 
   // Serve static files from /browser
   server.get('*.*', express.static(distFolder, {
-    maxAge: '1y'
+    maxAge: '0'
   }));
 
   // All regular routes use the Universal engine
