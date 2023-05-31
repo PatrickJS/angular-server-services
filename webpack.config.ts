@@ -11,17 +11,25 @@ export default (
   opts: CustomWebpackBrowserSchema,
   targetOptions: TargetOptions
 ) => {
+  const isServer = targetOptions.target === 'server';
   cfg?.plugins?.push(
     new DefinePlugin({
       APP_VERSION: JSON.stringify(pkg.version),
     }),
-    new AngularServerServicePlugin({
-      "serverConfig": path.join(__dirname, 'src/app/app.config.server.ts'),
-      "serverComponents": [
-        "ExampleService"
-      ]
-    })
   );
+  if (!isServer) {
+    cfg?.plugins?.push(
+      new AngularServerServicePlugin({
+        "target": isServer ? 'server' : 'browser',
+        // TODO: grab server config from angular.json
+        "serverConfig": path.join(__dirname, 'src/app/app.config.server.ts'),
+        // TODO: grab all components in @server folder
+        "serverComponents": [
+          "ExampleService"
+        ]
+      })
+    );
+  }
 
   return cfg;
 };

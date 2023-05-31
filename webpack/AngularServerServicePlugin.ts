@@ -6,7 +6,28 @@ import generate from '@babel/generator';
 import * as fs from 'fs';
 import * as path from 'path';
 
+function getFilesInDirectory(directory: string, extension: string): string[] {
+  let files: string[] = [];
+
+  const items = fs.readdirSync(directory);
+  for (const item of items) {
+    const fullPath = path.join(directory, item);
+    const stat = fs.statSync(fullPath);
+
+    if (stat.isDirectory()) {
+      files = files.concat(getFilesInDirectory(fullPath, extension));
+    } else if (path.extname(item) === extension) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+}
+
+
 interface Compiler {
+  inputFileSystem: any;
+  outputFileSystem: any;
   context: string;
   hooks: {
     beforeCompile: {
@@ -17,7 +38,7 @@ interface Compiler {
 
 export class AngularServerServicePlugin {
   once = false;
-  constructor(private options: { serverConfig: string, serverComponents: string[] }) {}
+  constructor(private options: { target: 'server' | 'browser', serverConfig: string, serverComponents: string[] }) {}
   apply(compiler: Compiler) {
     if (this.once) {
       return;
@@ -32,6 +53,11 @@ export class AngularServerServicePlugin {
         plugins: ['typescript', 'decorators-legacy'],
       };
       this.generateClientComponent(serverComponents, compiler, parserOptions);
+      this.replaceServerWithClientImports(
+        path.resolve(compiler.context, './src/app'),
+        compiler,
+        parserOptions
+      );
       this.generateServerConfig(serverComponents, compiler, parserOptions);
 
 
@@ -39,6 +65,7 @@ export class AngularServerServicePlugin {
       callback();
     });
   }
+  
   generateServerConfig(serverComponents: string[], compiler: Compiler, parserOptions: ParserOptions) {
     const filePath = path.resolve(compiler.context, this.options.serverConfig);
     const fileContent = fs.readFileSync(filePath, 'utf-8');
@@ -109,8 +136,44 @@ export class AngularServerServicePlugin {
 
     const output = generate(ast, {}, fileContent);
     const formattedOutput = prettier.format(output.code, { semi: false, parser: "babel" });
-    fs.writeFileSync(filePath, formattedOutput, 'utf-8');
+    // fs.writeFileSync(filePath, formattedOutput, 'utf-8');
+    // const fileContent = compiler.inputFileSystem.readFileSync(filePath, 'utf-8');
+    compiler.outputFileSystem.writeFileSync(filePath, formattedOutput, 'utf-8');
+
   }
+  replaceServerWithClientImports(
+    appFolderPath: string,
+    compiler: Compiler,
+    parserOptions: ParserOptions
+  ) {
+    // Get all .ts files in the app folder and subfolders
+    const files = getFilesInDirectory(appFolderPath, '.ts');
+  
+    files.forEach((file) => {
+      const fileContent = fs.readFileSync(file, 'utf-8');
+  
+      // Only edit files with @server and not .server files
+      if (!fileContent.includes('@server') || file.includes('.server')) {
+        return;
+      }
+  
+      const ast = parse(fileContent, parserOptions);
+  
+      traverse(ast, {
+        ImportDeclaration(path: NodePath<t.ImportDeclaration>) {
+          if (t.isStringLiteral(path.node.source) && path.node.source.value.startsWith('@server/')) {
+            // Replace '@server' with '@client'
+            path.node.source.value = path.node.source.value.replace('@server', '@client');
+          }
+        },
+      });
+  
+      const output = generate(ast, {}, fileContent);
+      // fs.writeFileSync(file, output.code, 'utf-8');
+      compiler.outputFileSystem.writeFileSync(file, output.code, 'utf-8');
+    });
+  }
+
   generateClientComponent(serverComponents: string[], compiler: Compiler, parserOptions: ParserOptions) {
     const serverServicePath = path.resolve(compiler.context, './src/@server/ExampleService.ts');
     const clientServicePath = path.resolve(compiler.context, './src/@client/ExampleService.ts');
@@ -148,6 +211,7 @@ export class AngularServerServicePlugin {
 
     const output = generate(ast, {}, serverServiceContent);
     const formattedOutput = prettier.format(output.code, { semi: false, parser: "babel" });
-    fs.writeFileSync(clientServicePath, formattedOutput, 'utf-8');
+    // fs.writeFileSync(clientServicePath, formattedOutput, 'utf-8');
+    compiler.outputFileSystem.writeFileSync(clientServicePath, formattedOutput, 'utf-8');
   }
 }
