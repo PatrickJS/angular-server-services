@@ -1,4 +1,4 @@
-# Angular Server Services
+# Angular Server Services 🍑
 This project presents an example of Angular Server Services implementation, utilizing proxying for client services to make RPC (Remote Procedure Calls) to the server service. The goal of this example is to demonstrate how easily these services can be auto-generated, potentially reducing half of your existing codebase.
 
 Whats used in the repo:
