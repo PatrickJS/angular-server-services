@@ -4,6 +4,7 @@ This project presents an example of Angular Server Services implementation, util
 
 Whats used in the repo:
 * Angular 16
+* Standalone Components
 * Universal
 * Hydration
 * NgExpressEngine
@@ -33,6 +34,11 @@ Initial load uses transfer state. When you navigate to another page the back to 
 * [/app/home/ServerService/example.service.server.ts](https://github.com/PatrickJS/angular-server-services/blob/main/src/app/home/ServerService/example.service.server.ts): ServerService example
 * [/server/main.ts](https://github.com/PatrickJS/angular-server-services/blob/e5deec3011d17c1f7301b848eb3f88d268ea8454/server/main.ts#L36...L45): server RPC endpoint
 * [/app/app.config.browser](https://github.com/PatrickJS/angular-server-services/blob/main/src/app/app.config.browser.ts#L10...L38): client RPC requests
+
+If we had Angular support then the api would look like this (a lot less code)
+* [branch for ideal api](https://github.com/PatrickJS/angular-server-services/tree/ideal-api)
+* [ExampleService](https://github.com/PatrickJS/angular-server-services/blob/ideal-api/src/%40server/Example.service.ts)
+* [HomeComponent](https://github.com/PatrickJS/angular-server-services/blob/ideal-api/src/app/home/home.component.ts#L4)
 
 # TODO
 - [ ] use webpack to auto-generate ServerServices
