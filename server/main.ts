@@ -32,7 +32,7 @@ export function app(): express.Express {
   server.get('/api/**', (req, res) => {
   });
 
-  // TODO: auto generate this
+  // TODO: auto generate this in ngExpressEngine to get injector
   server.post('/angular-server-services/:Service/:Method', (req, res) => {
     const service = injector.get(req.params.Service);
     console.log('angular-server-service request: service', req.params.Service)
@@ -65,6 +65,7 @@ export function app(): express.Express {
         res.send(err);
       }
       console.log('SSR done');
+      // TODO: better transfer state
       // TODO: auto generate this
       res.send(html.replace(/<!-- NG-UNIVERSAL -->/, `<script id="ng-universal-state" type="angular/json">${JSON.stringify(state, null, 2)}</script>`));
     });
