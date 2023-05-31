@@ -36,6 +36,8 @@ Initial load uses transfer state. When you navigate to another page the back to 
 
 # TODO
 - [ ] use webpack to auto-generate ServerServices
-- [ ] batch requests
-- [ ] hook into router to batch requests
-- [ ] server commponents?
+- [ ] create @server folder in src that will be all server services and components
+- [ ] batch server requests
+- [ ] server commponents
+- [ ] hook into router to batch requests for server components
+
