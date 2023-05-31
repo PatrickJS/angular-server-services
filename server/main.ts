@@ -33,16 +33,17 @@ export function app(): express.Express {
   });
 
   // TODO: auto generate this in ngExpressEngine to get injector
-  server.post('/angular-server-services/:Service/:Method', (req, res) => {
-    const service = injector.get(req.params.Service);
-    console.log('angular-server-service request: service', req.params.Service)
-    const method = service[req.params.Method];
-    console.log('angular-server-service request: method', req.params.Method)
-    console.log('angular-server-service request: body', req.body)
-    method.apply(service, req.body).then((result: any) => {
-      res.json(result);
-    });
-  });
+  // not needed if angular builds this into universal
+  // server.post('/angular-server-services/:Service/:Method', (req, res) => {
+  //   const service = injector.get(req.params.Service);
+  //   console.log('angular-server-service request: service', req.params.Service)
+  //   const method = service[req.params.Method];
+  //   console.log('angular-server-service request: method', req.params.Method)
+  //   console.log('angular-server-service request: body', req.body)
+  //   method.apply(service, req.body).then((result: any) => {
+  //     res.json(result);
+  //   });
+  // });
 
   // Serve static files from /browser
   server.get('*.*', express.static(distFolder, {
