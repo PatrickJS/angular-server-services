@@ -30,9 +30,9 @@ go to [localhost ](http://localhost:4200/)
 
 Initial load uses transfer state. When you navigate to another page the back to Home we will make an RPC to get the updated state
 
-* [/app/home/ServerService/example.service.server.ts](https://github.com/PatrickJS/angular-server-services/blob/main/src/app/home/ServerService/example.service.server.ts)
-* [/server/main.ts](https://github.com/PatrickJS/angular-server-services/blob/e5deec3011d17c1f7301b848eb3f88d268ea8454/server/main.ts#L36)
-* [/app/app.config.browser](https://github.com/PatrickJS/angular-server-services/blob/main/src/app/app.config.browser.ts#L10...L38)
+* [/app/home/ServerService/example.service.server.ts](https://github.com/PatrickJS/angular-server-services/blob/main/src/app/home/ServerService/example.service.server.ts): ServerService example
+* [/server/main.ts](https://github.com/PatrickJS/angular-server-services/blob/e5deec3011d17c1f7301b848eb3f88d268ea8454/server/main.ts#L36...L45): server RPC endpoint
+* [/app/app.config.browser](https://github.com/PatrickJS/angular-server-services/blob/main/src/app/app.config.browser.ts#L10...L38): client RPC requests
 
 # TODO
 - [ ] use webpack to auto-generate ServerServices
