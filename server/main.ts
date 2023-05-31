@@ -9,7 +9,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import bootstrap, {injector, transferState} from '../src/bootstrap.server';
+import bootstrap from '../src/bootstrap.server';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -51,23 +51,11 @@ export function app(): express.Express {
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
-    // TODO: better transfer state
-    const state = {};
-    transferState._state = state;
     res.render(indexHtml, {
       req,
       providers: [
         { provide: APP_BASE_HREF, useValue: req.baseUrl },
       ],
-    }, (err, html) =>{
-      if (err) {
-        console.error(err);
-        res.send(err);
-      }
-      console.log('SSR done');
-      // TODO: better transfer state
-      // TODO: auto generate this
-      res.send(html.replace(/<!-- NG-UNIVERSAL -->/, `<script id="ng-universal-state" type="angular/json">${JSON.stringify(state, null, 2)}</script>`));
     });
   });
 

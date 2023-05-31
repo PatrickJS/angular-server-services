@@ -12,6 +12,4 @@ import { config } from './app/app.config.server';
 
 const bootstrap = () => bootstrapApplication(AppComponent, config);
 
-export { injector, transferState } from './app/app.config.server';
-
 export default bootstrap;
