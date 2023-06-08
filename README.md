@@ -40,7 +40,10 @@ If we had Angular support then the api would look like this (a lot less code)
 * [ExampleService](https://github.com/PatrickJS/angular-server-services/blob/ideal-api/src/%40server/Example.service.ts)
 * [HomeComponent](https://github.com/PatrickJS/angular-server-services/blob/ideal-api/src/app/home/home.component.ts#L4)
 
-# TODO: other branches
+Production ready version
+https://github.com/PatrickJS/angular-server-services/pull/2
+
+# TODO: production ready version
 - [x] use webpack to auto-generate ServerServices
 - [x] create @server folder in src that will be all server services and components
 - [ ] batch server requests
