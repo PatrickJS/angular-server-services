@@ -7,9 +7,12 @@ import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import { existsSync } from 'node:fs';
+import { existsSync, promises } from 'node:fs';
 import { join } from 'node:path';
 import bootstrap from '../src/bootstrap.server';
+import {ExampleService} from "@server/ExampleService";
+
+import {serverService} from './ngServerServices';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -32,16 +35,29 @@ export function app(): express.Express {
   server.get('/api/**', (req, res) => {
   });
 
-  // TODO: auto generate this in ngExpressEngine to get injector
-  // not needed if angular builds this into universal
-  server.post('/angular-server-services/:Service/:Method', (req, res) => {
-    const injector = require('../src/app/app.config.server').injector;
-    const service = injector.get(req.params.Service);
-    const method = service[req.params.Method];
-    console.log(`angular-server-service request: ${req.params.Service}.${req.params.Method}( ${JSON.stringify(req.body)} );`)
-    method.apply(service, req.body).then((result: any) => {
-      res.json(result);
-    });
+ 
+  server.post('/angular-server-services/:Service/:Method', async (req, res) => {
+    console.log('angular-server-services request:', req.params.Service, req.params.Method)
+    // setup ngApp for server
+    const document = await promises.readFile(join(distFolder, indexHtml + '.html'), 'utf-8');
+    const url = `${req.protocol}://${req.get('host') || ''}${req.baseUrl}/`;
+    const providers = [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
+    const config = {document, req, res, url, bootstrap, providers};
+
+    async function invokeService(appRef: any) {
+      const injector = appRef.injector;
+      const service = injector.get(ExampleService) as any;
+      const method = service[req.params.Method];
+      const json = await method.apply(service, req.body);
+      console.log(`angular-server-service invoke: ${req.params.Service}.${req.params.Method}( ${JSON.stringify(req.body)} );`, json)
+      return json;
+    }
+
+    const services = await serverService(config);
+    const result = await services.invoke(invokeService);
+    await services.destroy();
+
+    res.json(result);
   });
 
   // Serve static files from /browser
@@ -56,7 +72,14 @@ export function app(): express.Express {
       providers: [
         { provide: APP_BASE_HREF, useValue: req.baseUrl },
       ],
-    });
+    }, (err, html) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      }
+      console.log('rendering html');
+      res.send(html);
+    })
   });
 
   return server;

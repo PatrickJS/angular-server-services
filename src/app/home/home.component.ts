@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ExampleService } from '@server/ExampleService';
+import { ExampleService } from "@client/ExampleService";
 
 @Component({
   selector: 'app-home',
@@ -12,8 +12,12 @@ import { ExampleService } from '@server/ExampleService';
 })
 export default class HomeComponent {
   exampleService = inject(ExampleService);
-  example = this.exampleService.getTodo({id: 1});
+  // request data stream from service
+  example = this.exampleService.getTodo({
+    id: 1
+  });
+
+  // defined in webpack
   // @ts-ignore
   APP_VERSION = APP_VERSION;
-
 }

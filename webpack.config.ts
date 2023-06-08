@@ -17,19 +17,19 @@ export default (
       APP_VERSION: JSON.stringify(pkg.version),
     }),
   );
-  if (!isServer) {
-    cfg?.plugins?.push(
-      new AngularServerServicePlugin({
-        "target": isServer ? 'server' : 'browser',
-        // TODO: grab server config from angular.json
-        "serverConfig": path.join(__dirname, 'src/app/app.config.server.ts'),
-        // TODO: grab all components in @server folder
-        "serverComponents": [
-          "ExampleService"
-        ]
-      })
-    );
-  }
+  // if (!isServer) {
+  //   cfg?.plugins?.push(
+  //     new AngularServerServicePlugin({
+  //       "target": isServer ? 'server' : 'browser',
+  //       // TODO: grab server config from angular.json
+  //       "serverConfig": path.join(__dirname, 'src/app/app.config.server.ts'),
+  //       // TODO: grab all components in @server folder
+  //       "serverComponents": [
+  //         "ExampleService"
+  //       ]
+  //     })
+  //   );
+  // }
 
   return cfg;
 };
