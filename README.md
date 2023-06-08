@@ -57,4 +57,5 @@ https://github.com/PatrickJS/angular-server-services/assets/1016365/8b00d775-42c
 - [ ] hook into router to batch requests for server components
 - [ ] mixed server in client components and vice versa
 - [ ] server and client caching
+- [ ] UI over http
 
