@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 
 import { ExampleService } from "@client/ExampleService";
 
+
+export function randomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -16,14 +21,17 @@ export default class HomeComponent {
   example = this.exampleService.getTodo({
     id: 1
   });
+  example1 = this.exampleService.getTodo({
+    id: randomNumber(1, 5)
+  });
   example2 = this.exampleService.getTodo({
-    id: 2
+    id: randomNumber(5, 10)
   });
   example3 = this.exampleService.getTodo({
-    id: 3
+    id: randomNumber(10, 15)
   });
   example4 = this.exampleService.getTodo({
-    id: 4
+    id: randomNumber(15, 20)
   });
 
   // defined in webpack
