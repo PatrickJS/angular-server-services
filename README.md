@@ -42,6 +42,10 @@ If we had Angular support then the api would look like this (a lot less code)
 
 Production ready version
 * WIP https://github.com/PatrickJS/angular-server-services/pull/2
+* Preview
+
+https://github.com/PatrickJS/angular-server-services/assets/1016365/8b00d775-42c4-4d29-b79a-815906d35d04
+
 
 # TODO: production ready version
 - [x] use webpack to auto-generate ServerServices
@@ -51,4 +55,6 @@ Production ready version
 - [x] batch server requests
 - [ ] server commponents
 - [ ] hook into router to batch requests for server components
+- [ ] mixed server in client components and vice versa
+- [ ] server and client caching
 
