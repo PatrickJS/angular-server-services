@@ -41,7 +41,7 @@ If we had Angular support then the api would look like this (a lot less code)
 * [HomeComponent](https://github.com/PatrickJS/angular-server-services/blob/ideal-api/src/app/home/home.component.ts#L4)
 
 Production ready version
-https://github.com/PatrickJS/angular-server-services/pull/2
+* WIP https://github.com/PatrickJS/angular-server-services/pull/2
 
 # TODO: production ready version
 - [x] use webpack to auto-generate ServerServices
