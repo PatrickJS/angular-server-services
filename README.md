@@ -46,7 +46,9 @@ Production ready version
 # TODO: production ready version
 - [x] use webpack to auto-generate ServerServices
 - [x] create @server folder in src that will be all server services and components
-- [ ] batch server requests
+- [x] use angular TransferState
+- [x] batch client requests
+- [x] batch server requests
 - [ ] server commponents
 - [ ] hook into router to batch requests for server components
 
