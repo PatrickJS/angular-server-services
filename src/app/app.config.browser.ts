@@ -32,6 +32,11 @@ export class BatchClientRequests {
   }
   async flush() {
     const body = this._queue;
+    if (this._queue.length === 0) {
+      this._processing = false;
+      clearTimeout(this._timer);
+      return;
+    }
     this._queue = [];
     clearTimeout(this._timer);
     const ngServerService = `angular-server-services`;

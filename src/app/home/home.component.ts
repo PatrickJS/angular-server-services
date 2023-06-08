@@ -16,6 +16,15 @@ export default class HomeComponent {
   example = this.exampleService.getTodo({
     id: 1
   });
+  example2 = this.exampleService.getTodo({
+    id: 2
+  });
+  example3 = this.exampleService.getTodo({
+    id: 3
+  });
+  example4 = this.exampleService.getTodo({
+    id: 4
+  });
 
   // defined in webpack
   // @ts-ignore
