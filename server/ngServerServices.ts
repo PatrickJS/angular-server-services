@@ -116,8 +116,8 @@ export async function serverService({
   // appendServerContextInfo(applicationRef);
   // const output = platformState.renderToString();
   return {
-    invoke(cb: (appRef: ApplicationRef) => Promise<void>) {
-      return cb(applicationRef);
+    invoke(cb: any, Service: any, Method: string, args: any): Promise<void> {
+      return cb(applicationRef, Service, Method, args);
     },
     destroy() {
       return new Promise<void>((resolve) => {

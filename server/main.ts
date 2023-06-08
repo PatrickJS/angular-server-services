@@ -10,7 +10,7 @@ import * as bodyParser from 'body-parser';
 import { existsSync, promises } from 'node:fs';
 import { join } from 'node:path';
 import bootstrap from '../src/bootstrap.server';
-import {ExampleService} from "@server/ExampleService";
+import * as ServerServices from "@server";
 
 import {serverService} from './ngServerServices';
 
@@ -36,28 +36,48 @@ export function app(): express.Express {
   });
 
  
-  server.post('/angular-server-services/:Service/:Method', async (req, res) => {
-    console.log('angular-server-services request:', req.params.Service, req.params.Method)
+  server.post('/angular-server-services', async (req, res) => {
+    const request = req.body;
+    console.log('angular-server-services request:', request)
+
     // setup ngApp for server
     const document = await promises.readFile(join(distFolder, indexHtml + '.html'), 'utf-8');
+    // angular needs to render a url
     const url = `${req.protocol}://${req.get('host') || ''}${req.baseUrl}/`;
     const providers = [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
     const config = {document, req, res, url, bootstrap, providers};
 
-    async function invokeService(appRef: any) {
+    async function invokeService(appRef: any, Service: any, Method: string, args: any) {
       const injector = appRef.injector;
-      const service = injector.get(ExampleService) as any;
-      const method = service[req.params.Method];
-      const json = await method.apply(service, req.body);
-      console.log(`angular-server-service invoke: ${req.params.Service}.${req.params.Method}( ${JSON.stringify(req.body)} );`, json)
+      const serviceToken = (ServerServices as any)[Service];
+      const serviceInstance = injector.get(serviceToken) as any;
+      const method = serviceInstance[Method];
+      const json = await method.apply(serviceInstance, args);
+      console.log(`angular-server-service invoke: ${Service}.${Method}( ${JSON.stringify(args)} );`, json)
       return json;
     }
 
     const services = await serverService(config);
-    const result = await services.invoke(invokeService);
+    const invokeServices = request.map(async (info: any) => {
+      const result = await services.invoke(
+        invokeService,
+        info.service,
+        info.method,
+        info.args
+      );
+      return result;
+    })
+    const allRes = await Promise.allSettled(invokeServices);
     await services.destroy();
+    const resJson = allRes.map((res: any, index) => {
+      return {
+        ...request[index],
+        ...res
+      }
+    });
 
-    res.json(result);
+
+    res.json(resJson);
   });
 
   // Serve static files from /browser

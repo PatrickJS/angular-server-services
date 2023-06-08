@@ -10,7 +10,7 @@ export class ExampleService {
   private transferState = inject(TransferState);
   async getTodo(options: { id: number }): Promise<any> {
 
-    // TODO: zone.js things
+    // TODO: zone.js not capturing async/await
     const macroTask = Zone.current
     .scheduleMacroTask(
       `WAITFOR-${Math.random()}-${Date.now()}`,
@@ -30,7 +30,8 @@ export class ExampleService {
     console.log('http response: ', json);
 
     this.transferState.set(key, data);
-    // TODO: zone.js things
+
+    // TODO: zone.js not capturing async/await
     macroTask.invoke();
     return data;
   }
