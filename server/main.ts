@@ -1,5 +1,4 @@
 import 'reflect-metadata'; // injection-js
-import 'cross-fetch/polyfill';
 import 'zone.js/node';
 import 'zone.js/dist/zone-patch-fetch';
 
