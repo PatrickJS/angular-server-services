@@ -1,6 +1,6 @@
 import bootstrap from './bootstrap.browser';
 
-// dom ready
-requestAnimationFrame(() => {
-  bootstrap();
-});  
+// Dom ready
+requestAnimationFrame(function ready () {
+	return document.body ? bootstrap() : requestAnimationFrame(ready);
+});
