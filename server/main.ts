@@ -7,9 +7,12 @@ import { APP_BASE_HREF } from '@angular/common';
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import { existsSync } from 'node:fs';
+import { existsSync, promises } from 'node:fs';
 import { join } from 'node:path';
-import bootstrap, {injector, transferState} from '../src/bootstrap.server';
+import bootstrap from '../src/bootstrap.server';
+import * as ServerServices from "@server";
+
+import {serverService} from './ngServerServices';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -32,16 +35,49 @@ export function app(): express.Express {
   server.get('/api/**', (req, res) => {
   });
 
-  // TODO: auto generate this in ngExpressEngine to get injector
-  server.post('/angular-server-services/:Service/:Method', (req, res) => {
-    const service = injector.get(req.params.Service);
-    console.log('angular-server-service request: service', req.params.Service)
-    const method = service[req.params.Method];
-    console.log('angular-server-service request: method', req.params.Method)
-    console.log('angular-server-service request: body', req.body)
-    method.apply(service, req.body).then((result: any) => {
-      res.json(result);
+ 
+  server.post('/angular-server-services', async (req, res) => {
+    const request = req.body;
+    console.log('angular-server-services request:', request)
+
+    // setup ngApp for server
+    const document = await promises.readFile(join(distFolder, indexHtml + '.html'), 'utf-8');
+    // angular needs to render a url
+    const url = `${req.protocol}://${req.get('host') || ''}${req.baseUrl}/`;
+    const providers = [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
+    const config = {document, req, res, url, bootstrap, providers};
+
+    async function invokeService(appRef: any, Service: any, Method: string, args: any) {
+      const injector = appRef.injector;
+      const serviceToken = (ServerServices as any)[Service];
+      const serviceInstance = injector.get(serviceToken) as any;
+      const method = serviceInstance[Method];
+      const json = await method.apply(serviceInstance, args);
+      console.log(`angular-server-service invoke: ${Service}.${Method}( ${JSON.stringify(args)} );`, json)
+      return json;
+    }
+
+    const services = await serverService(config);
+    const invokeServices = request.map(async (info: any) => {
+      const result = await services.invoke(
+        invokeService,
+        info.service,
+        info.method,
+        info.args
+      );
+      return result;
+    })
+    const allRes = await Promise.allSettled(invokeServices);
+    await services.destroy();
+    const resJson = allRes.map((res: any, index) => {
+      return {
+        ...request[index],
+        ...res
+      }
     });
+
+
+    res.json(resJson);
   });
 
   // Serve static files from /browser
@@ -51,24 +87,19 @@ export function app(): express.Express {
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
-    // TODO: better transfer state
-    const state = {};
-    transferState._state = state;
     res.render(indexHtml, {
       req,
       providers: [
         { provide: APP_BASE_HREF, useValue: req.baseUrl },
       ],
-    }, (err, html) =>{
+    }, (err, html) => {
       if (err) {
         console.error(err);
         res.send(err);
       }
-      console.log('SSR done');
-      // TODO: better transfer state
-      // TODO: auto generate this
-      res.send(html.replace(/<!-- NG-UNIVERSAL -->/, `<script id="ng-universal-state" type="angular/json">${JSON.stringify(state, null, 2)}</script>`));
-    });
+      console.log('rendering html');
+      res.send(html);
+    })
   });
 
   return server;
